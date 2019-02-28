@@ -1,8 +1,9 @@
 'use strict';
 
 const Hapi=require('hapi');
-const mongoose = require('mongoose');
-const Painting = require('./models/painting.js');
+//const mongoose = require('mongoose');
+//const schema = require('./models/wolves.js/index.js');
+
 
 // Create a server with a host and port
 const server=Hapi.server({
@@ -11,64 +12,26 @@ const server=Hapi.server({
 });
 
 // Add the route
-const init = async() => {
-    server.route([
-        {
-                method:'GET',
-                path:'/hello',
-                handler:function(request,h) {
-            
-                    return'hello world';
-                }   
-},
-     {
-                method:'GET',
-                path:'/api/paintings',
-                handler:(req,result) => {
-                return Painting.find();
-         }
+const db = require('./database.js').db;
+const routes = require('./route.js');
 
-},
-    {
-                method:'POST',
-                path:'api/paintings',
-                handler: (req,result) => {
-                const {name, url, techniques} = req.payload;
-                const painting = new Painting({
-                    name,
-                    url,
-                    techniques
-                });
-       return painting.save();         
-     }
+server.route(routes);
 
-    }
-  
+server.route({
+	method: 'GET',
+	path: '/',
+	handler(request, reply) {
+		reply('Hello, world!');
+	}
+});
 
-
-]);
-}
-init();
-// server.route([
-//     {
-//     method:'GET',
-//     path:'/hello',
-//     handler:function(request,h) {
-
-//         return'hello world';
-//     }
-//     {
-//         method:'GET',
-//     path:'/hello',
-//     handler:function(request,h) {
-
-//         return'hello world';
-//     }
-
-//     }
-
-
-// });
+server.route({
+	method: 'GET',
+	path: '/api',
+	handler(request, reply) {
+		reply('Hello, API!');
+	}
+});
 
 // Start the server
 const start =  async function() {
@@ -86,11 +49,3 @@ const start =  async function() {
 
 start();
 
-//database connection
-mongoose.connect("mongodb://localhost:27017/test",{useNewUrlParser: true}, err => {
-    if(!err){
-        console.log('mongodb connection success')
-    }else{
-        console.log('error:'+ err)
-    }
-})

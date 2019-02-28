@@ -1,0 +1,138 @@
+28.2.19 /time take 4 hrs
+task details:
+- learn hapi js 
+- mongo db advanced queries
+
+@ mongodb filter and search a documents:
+
+  example: -we need one object in a table: db.collection.find({name: "keerthi"})
+          - filter a true and false thinks :db.collection.find({isFrequentBuyer": false})
+  - all the customers age less than  db.collection.find({age: {$lt: 30}});
+  - greate: db.collection.find({age: {$gt: 30}});
+  -how many members letters have a to z like (a):db.collection.find({name: /a/});
+  -name starting search comment:db.collection.find({name: /^jo/});
+  -two operation:db.collection.find({age: {$gt: 40},isFrequentBuyer: true});
+  -check frequentbuyer ascending(1) and descenting order:(-1)
+        db.collection.find({isFrequentBuyer: true}).sort({age: 1})
+
+
+@mongodb advanced update cmd:
+
+link:https://micropyramid.com/blog/advanced-queries-in-mongodb/
+http://tutorialtous.com/mongodb/mongodbvssql.php
+
+limit query:db.user.find().limit(10)
+Count Query:db.user.find().count()
+
+@Query Using Modifiers:
+----Not Equal Modifier($ne):db.user.find({"age": {$ne: 20}})    # Returns Cursor with the documents having age not equal to 20
+----Greater/Less than Modifier($gt, $lt, $gte, $lte):
+---- db.user.find({"age": {$gt: 20}})
+---- db.user.find({"age": {$lt: 20}})
+---- db.user.find({"age": {$gte: 20}})
+-----db.user.find({"age": {$lte: 20}})
+
+@Increment Modifier:
+
+---db.User.update({"name": "mp"}, {"$inc": {"age": "newValue"}})       Updates the value of age which collection having name has "mp"
+
+@Set Elements in Array: This updates the value specified, second element(array index of 1) in the skills field
+
+  db.products.update(
+	   { _id: 1 },
+	   { $set:
+	      {
+	        "skills.1": "newValue",
+	      }
+	   }
+	)
+
+    @Push Modifier($push):
+     "$push" adds an element to the end of an array if the specified key exists and creates a new array if it does not.
+     Append Multiple Values to an Array:
+       
+    db.user.update({ "name": "mp" },
+	               { $push:
+	                   { friends:
+	                       { $each: [ "xyz", "xyz", "xyz" ]
+	                       }
+	                   }
+	               })
+    
+    @AddToSet Modifier($addToSet):
+
+    The "$addToSet" operator adds a value to an array unless the value is already present, if the value is in the array it will not append.
+
+ { _id: 1, company_name: "micropyramid", employees: [ "emp1", "emp2" ] } This is the collection of Company
+
+    @This appends "emp3" to the array employees of the company name "micropyramid".
+     db.company.update({_id: 1},
+	        { $addToSet:
+	            { employees: "emp3" }
+	        })
+
+
+@Using "$each" Modifier:
+
+ db.company.update({_id: 1},
+	{ $addToSet:
+	    { employees:
+	        {"$each": ["emp3", "emp4", "emp1"]
+	        }
+	    }
+	})
+    result: { _id: 1,
+          company_name: "micropyramid",
+          employees: [ "emp1", "emp2", "emp3", "emp4" ]
+        }
+
+  @Pop Modifier($pop):
+
+
+  "$pop" Removes first or the last element of an array, -1 to remove the first element of an array and 1 to remove the last element in an array.      
+  db.company.update( { _id: 1 }, { $pop: { employees: -1 } } )    it removes "emp1" in the employees array
+  db.company.update( { _id: 1 }, { $pop: { employees: 1 } } )   it removes "emp4" in the employees array
+
+
+
+  @OR Queries:
+
+
+There are two ways to do OR query "$or"
+1. "$in" can be used for a variety of values for a single key.
+
+  db.company.find(
+        {"employees":
+            {"$in": ["emp1", "emp2"]}
+        })
+2. "$or" can be used to query for any of the given valuesacross multiple keys
+    ex: db.user.find({"$or":
+            [
+                {"age": 10},
+                {"intrests.name": "painting"}
+            ]
+    })
+
+
+@AND Queries:
+
+1. "$all" can be used to query for a variety of values for a single key.
+
+        db.company.find(
+                {"employees":
+                    {"$all": ["emp1", "emp2"]}
+                })
+
+
+
+ Below query will do exact match, considering order also, if order changes it will not show any result
+
+                db.company.find(
+                {"employees":
+                    ["emp1", "emp2"]
+                })
+
+@schemaValidation:
+
+  
+
