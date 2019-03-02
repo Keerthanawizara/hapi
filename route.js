@@ -27,7 +27,7 @@ module.exports = [
 				if (error) {
 					console.error(error);
 				}
-               h.response(wolf);
+               reply(wolf);
 			});
 		}
 	}

@@ -134,5 +134,64 @@ There are two ways to do OR query "$or"
 
 @schemaValidation:
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/2/3/19
+
+When the scheme authenticate() method implementation throws an error or calls h.unauthenticated(), the specifics of the error affect whether additional authentication strategies will be attempted (if configured for the route). If the error includes a message, no additional strategies will be attempted. If the err does not include a message but does include the scheme name (e.g. Boom.unauthorized(null, 'Custom')), additional strategies will be attempted in the order of preference (defined in the route configuration). If authentication fails, the scheme names will be present in the 'WWW-Authenticate' header.
+
+When the scheme payload() method throws an error with a message, it means payload validation failed due to bad payload. If the error has no message but includes a scheme name (e.g. Boom.unauthorized(null, 'Custom')), authentication may still be successful if the route auth.payload configuration is set to 'optional'.
+
+const Hapi = require('hapi');
+const server = Hapi.server({ port: 80 });
+
+const scheme = function (server, options) {
+
+    return {
+        authenticate: function (request, h) {
+
+            const req = request.raw.req;
+            const authorization = req.headers.authorization;
+            if (!authorization) {
+                throw Boom.unauthorized(null, 'Custom');
+            }
+
+            return h.authenticated({ credentials: { user: 'john' } });
+        }
+    };
+};
+
+server.auth.scheme('custom', scheme);
+
+
+
+
+Path
+The path option must be a string, though it can contain named parameters. To name a parameter in a path, simply wrap it with {}. For example:
+
+
+server.route({
+    method: 'GET',
+    path: '/hello/{user}',
+    handler: function (request, h) {
+
+        return `Hello ${encodeURIComponent(request.params.user)}!`;
+    }
+});
+
+
   
 

@@ -27,10 +27,21 @@ server.route({
 
 server.route({
 	method: 'GET',
-	path: '/api',
-	handler(request, reply) {
-		reply('Hello, API!');
+	path: '/api/{name}',
+	handler(request, h) {
+        ///h('Hello, '+request.params.name);
+        return `Hello ${encodeURIComponent(request.params.name)}!`
 	}
+});
+
+server.route({
+    method: 'GET',
+    path: '/hello/{user*2}',
+    handler: function (request, h) {
+
+        const userParts = request.params.user.split('/');
+        return `Hello ${encodeURIComponent(userParts[0])} ${encodeURIComponent(userParts[1])}!`;
+    }
 });
 
 // Start the server
